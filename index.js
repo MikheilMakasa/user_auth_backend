@@ -187,6 +187,7 @@ app.post('/delete-users', checkAuth, async (req, res) => {
     res.json({ status: 400, message: error });
   }
 });
-app.listen(5001, () => {
+const port = process.env.PORT || 5001;
+app.listen(port, () => {
   console.log('server is listening to port: 5001');
 });
