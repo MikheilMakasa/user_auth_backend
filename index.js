@@ -16,7 +16,6 @@ const db = mysql.createConnection({
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE,
-  port: process.env.PORT,
 });
 
 db.connect((err) => {
@@ -37,11 +36,11 @@ app.post('/register', async (req, res) => {
   const sqlQuery1 = `INSERT INTO users (name, email, password, last_login_time, registration_time, status) VALUES (?,?,?,?,?,?)`;
 
   await db.query(sqlQuery, async (error, data) => {
-    console.log(data);
     try {
-      if (data?.length > 0) {
+      if (data.length) {
         res.json({ status: 400, message: 'User already exists' });
-      } else {
+      }
+      if (data.length === 0) {
         await db.query(
           sqlQuery1,
           [name, email, newPassword, currentTime, currentTime, status], // add last_login_time, registration_time, and status values
@@ -95,7 +94,7 @@ app.post('/login', async (req, res) => {
               // Update last_login_time in the database
               db.query(
                 'UPDATE users SET last_login_time = ? WHERE email = ?',
-                [new Date(), email],
+                [new Date().toISOString(), email],
                 function (error, results, fields) {
                   if (error) {
                     console.error(error);
