@@ -6,28 +6,18 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('./middleware/checkAuth');
-const { Sequelize } = require('sequelize');
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-const db = new Sequelize({
-  username: process.env.DATABASE_USER,
+const db = mysql.createConnection({
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE,
-  dialect: 'mysql',
   port: process.env.PORT,
-  host: process.env.DATABASE_HOST,
 });
-
-// const db = mysql.createConnection({
-//   host: process.env.DATABASE_HOST,
-//   user: process.env.DATABASE_USER,
-//   password: process.env.DATABASE_PASSWORD,
-//   database: process.env.DATABASE,
-//   port: process.env.PORT,
-// });
 
 db.connect((err) => {
   if (err) {
@@ -198,8 +188,6 @@ app.post('/delete-users', checkAuth, async (req, res) => {
     res.json({ status: 400, message: error });
   }
 });
-
-db.sync();
 const port = process.env.PORT || 5001;
 app.listen(port, () => {
   console.log('server is listening to port: 5001');
