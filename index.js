@@ -66,7 +66,8 @@ app.post('/register', async (req, res) => {
   const currentTime = new Date().toISOString(); // get current time in ISO string format
 
   const sqlQuery = `SELECT * FROM users WHERE email='${email}'`;
-  const sqlQuery1 = `INSERT INTO users (name, email, password, last_login_time, registration_time, status) VALUES (?,?,?,?,?,?)`;
+  const sqlQuery1 =
+    'INSERT INTO users (name, email, password, last_login_time, registration_time, status) VALUES (?)';
 
   try {
     const [rows] = await db.query(sqlQuery);
