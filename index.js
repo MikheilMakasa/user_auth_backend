@@ -80,7 +80,7 @@ app.post('/login', async (req, res) => {
         if (results.length > 0) {
           const user = results[0];
           if (user.status === 'blocked') {
-            return res.send({
+            return res.json({
               code: 403,
               error: 'User account is blocked',
             });
