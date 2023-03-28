@@ -36,27 +36,26 @@ app.post('/register', async (req, res) => {
   const sqlQuery1 = `INSERT INTO users (name, email, password, last_login_time, registration_time, status) VALUES (?,?,?,?,?,?)`;
 
   await db.query(sqlQuery, async (error, data) => {
-    res.send('hello');
-    // try {
-    //   if (data.length > 0) {
-    //     res.json({ status: 400, message: 'User already exists' });
-    //   }
-    //   if (data.length === 0) {
-    //     await db.query(
-    //       `INSERT INTO users (name, email, password, last_login_time, registration_time, status) VALUES (${name},${email},${newPassword},${currentTime},${currentTime},${status})`,
-    //       // [name, email, newPassword, currentTime, currentTime, status], // add last_login_time, registration_time, and status values
-    //       (error, result) => {
-    //         if (result) {
-    //           res.json({ status: 200, message: 'New user', data: result });
-    //         } else {
-    //           res.json({ status: 400, message: 'Error creating user' });
-    //         }
-    //       }
-    //     );
-    //   }
-    // } catch (error) {
-    //   res.json({ status: 400, message: 'Error creating user' });
-    // }
+    try {
+      if (data.length > 0) {
+        res.json({ status: 400, message: 'User already exists' });
+      }
+      if (data.length === 0) {
+        await db.query(
+          sqlQuery1,
+          [name, email, newPassword, currentTime, currentTime, status], // add last_login_time, registration_time, and status values
+          (error, result) => {
+            if (result) {
+              res.json({ status: 200, message: 'New user', data: result });
+            } else {
+              res.json({ status: 400, message: 'Error creating user' });
+            }
+          }
+        );
+      }
+    } catch (error) {
+      res.json({ status: 400, message: 'Error creating user' });
+    }
   });
 });
 
