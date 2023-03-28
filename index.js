@@ -95,7 +95,7 @@ app.post('/login', async (req, res) => {
                 }
               );
 
-              // Update last_login_time in the database
+              // Update last_login_time
               db.query(
                 'UPDATE users SET last_login_time = ? WHERE email = ?',
                 [new Date().toISOString(), email],
