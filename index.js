@@ -52,13 +52,13 @@ app.post('/register', async (req, res) => {
                 data: result,
               });
             } else {
-              return res.json({ status: 400, message: 'try ' + error });
+              return res.json({ status: 400, message: error });
             }
           }
         );
       }
     } catch (error) {
-      return res.json({ status: 400, message: 'catch ' + error });
+      return res.json({ status: 400, message: error });
     }
   });
 });
