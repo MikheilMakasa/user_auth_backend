@@ -38,7 +38,7 @@ app.post('/register', async (req, res) => {
   await db.query(sqlQuery, async (error, data) => {
     try {
       if (data.length > 0) {
-        res.json({ status: 400, message: 'User already exists' });
+        return res.json({ status: 400, message: 'User already exists' });
       }
       if (data.length === 0) {
         await db.query(
@@ -46,15 +46,19 @@ app.post('/register', async (req, res) => {
           [name, email, newPassword, currentTime, currentTime, status], // add last_login_time, registration_time, and status values
           (error, result) => {
             if (result) {
-              res.json({ status: 200, message: 'New user', data: result });
+              return res.json({
+                status: 200,
+                message: 'New user',
+                data: result,
+              });
             } else {
-              res.json({ status: 400, message: 'try ' + error });
+              return res.json({ status: 400, message: 'try ' + error });
             }
           }
         );
       }
     } catch (error) {
-      res.json({ status: 400, message: 'catch ' + error });
+      return res.json({ status: 400, message: 'catch ' + error });
     }
   });
 });
@@ -67,7 +71,7 @@ app.post('/login', async (req, res) => {
     [email],
     async function (error, results, fields) {
       if (error) {
-        res.send({
+        return res.send({
           code: 400,
           failed: 'error occurred',
           error: error,
@@ -76,7 +80,7 @@ app.post('/login', async (req, res) => {
         if (results.length > 0) {
           const user = results[0];
           if (user.status === 'blocked') {
-            res.send({
+            return res.send({
               code: 403,
               error: 'User account is blocked',
             });
@@ -102,16 +106,16 @@ app.post('/login', async (req, res) => {
                 }
               );
 
-              res.json({ token: token });
+              return res.json({ token: token });
             } else {
-              res.send({
+              return res.send({
                 code: 204,
                 error: 'Email and password does not match',
               });
             }
           }
         } else {
-          res.send({
+          return res.send({
             code: 206,
             error: 'Email does not exist',
           });
@@ -129,7 +133,7 @@ app.get('/dashboard', checkAuth, async (req, res) => {
     if (error) {
       res.status(500).json({ message: 'Error getting dashboard data' });
     } else {
-      res.json({ data: results });
+      return res.json({ data: results });
     }
   });
 });
@@ -147,9 +151,9 @@ app.post('/block-users', checkAuth, async (req, res) => {
       })
     );
 
-    res.json({ status: 200, message: 'Users successfully blocked' });
+    return res.json({ status: 200, message: 'Users successfully blocked' });
   } catch (error) {
-    res.json({ status: 400, message: error });
+    return res.json({ status: 400, message: error });
   }
 });
 
@@ -166,9 +170,9 @@ app.post('/unblock-users', checkAuth, async (req, res) => {
       })
     );
 
-    res.json({ status: 200, message: 'Users successfully unblocked' });
+    return res.json({ status: 200, message: 'Users successfully unblocked' });
   } catch (error) {
-    res.json({ status: 400, message: error });
+    return res.json({ status: 400, message: error });
   }
 });
 
@@ -182,9 +186,9 @@ app.post('/delete-users', checkAuth, async (req, res) => {
       })
     );
 
-    res.json({ status: 200, message: 'Users successfully deleted' });
+    return res.json({ status: 200, message: 'Users successfully deleted' });
   } catch (error) {
-    res.json({ status: 400, message: error });
+    return res.json({ status: 400, message: error });
   }
 });
 const port = process.env.PORT || 5001;
