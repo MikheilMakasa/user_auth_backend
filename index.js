@@ -39,7 +39,7 @@ app.post('/register', async (req, res) => {
   await db.query(sqlQuery, async (error, data) => {
     console.log(data);
     try {
-      if (data.length > 0) {
+      if (data?.length > 0) {
         res.json({ status: 400, message: 'User already exists' });
       } else {
         await db.query(
