@@ -37,10 +37,9 @@ app.post('/register', async (req, res) => {
 
   await db.query(sqlQuery, async (error, data) => {
     try {
-      if (data.length > 0) {
+      if (data) {
         res.json({ status: 400, message: 'User already exists' });
-      }
-      if (data.length === 0) {
+      } else {
         await db.query(
           sqlQuery1,
           [name, email, newPassword, currentTime, currentTime, status], // add last_login_time, registration_time, and status values
