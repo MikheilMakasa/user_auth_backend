@@ -110,7 +110,7 @@ app.post('/login', async (req, res) => {
             } else {
               return res.send({
                 code: 204,
-                error: 'Email and password does not match',
+                error: 'Email or password does not match',
               });
             }
           }
