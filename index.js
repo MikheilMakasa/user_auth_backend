@@ -16,6 +16,7 @@ const db = mysql.createConnection({
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE,
+  port: process.env.PORT,
 });
 
 db.connect((err) => {
@@ -36,8 +37,9 @@ app.post('/register', async (req, res) => {
   const sqlQuery1 = `INSERT INTO users (name, email, password, last_login_time, registration_time, status) VALUES (?,?,?,?,?,?)`;
 
   await db.query(sqlQuery, async (error, data) => {
+    console.log(data);
     try {
-      if (data) {
+      if (data.length > 0) {
         res.json({ status: 400, message: 'User already exists' });
       } else {
         await db.query(
@@ -47,13 +49,13 @@ app.post('/register', async (req, res) => {
             if (result) {
               res.json({ status: 200, message: 'New user', data: result });
             } else {
-              res.json({ status: 400, message: 'try ' + error });
+              res.json({ status: 400, message: 'Error creating user' });
             }
           }
         );
       }
     } catch (error) {
-      res.json({ status: 400, message: 'catch ' + error });
+      res.json({ status: 400, message: 'Error creating user' });
     }
   });
 });
