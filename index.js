@@ -49,13 +49,13 @@ app.post('/register', async (req, res) => {
             if (result) {
               res.json({ status: 200, message: 'New user', data: result });
             } else {
-              res.json({ status: 400, message: 'Error creating user' });
+              res.json({ status: 400, message: 'try ' + error });
             }
           }
         );
       }
     } catch (error) {
-      res.json({ status: 400, message: 'Error creating user' });
+      res.json({ status: 400, message: 'catch ' + error });
     }
   });
 });
