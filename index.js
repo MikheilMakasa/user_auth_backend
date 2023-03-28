@@ -26,6 +26,39 @@ db.connect((err) => {
   }
 });
 
+// app.post('/register', async (req, res) => {
+//   const { name, email, password } = req.body;
+//   const newPassword = await bcrypt.hash(password, 10);
+//   const status = 'active'; // set default status as active
+//   const currentTime = new Date().toISOString(); // get current time in ISO string format
+
+//   const sqlQuery = `SELECT * FROM users WHERE email='${email}'`;
+//   const sqlQuery1 = `INSERT INTO users (name, email, password, last_login_time, registration_time, status) VALUES (?,?,?,?,?,?)`;
+
+//   await db.query(sqlQuery, async (error, data) => {
+//     try {
+//       if (data.length > 0) {
+//         res.json({ status: 400, message: 'User already exists' });
+//       }
+//       if (data.length === 0) {
+//         await db.query(
+//           sqlQuery1,
+//           [name, email, newPassword, currentTime, currentTime, status], // add last_login_time, registration_time, and status values
+//           (error, result) => {
+//             if (result) {
+//               res.json({ status: 200, message: 'New user', data: result });
+//             } else {
+//               res.json({ status: 400, message: 'Error creating user' });
+//             }
+//           }
+//         );
+//       }
+//     } catch (error) {
+//       res.json({ status: 400, message: 'Error creating user' });
+//     }
+//   });
+// });
+
 app.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
   const newPassword = await bcrypt.hash(password, 10);
@@ -35,28 +68,25 @@ app.post('/register', async (req, res) => {
   const sqlQuery = `SELECT * FROM users WHERE email='${email}'`;
   const sqlQuery1 = `INSERT INTO users (name, email, password, last_login_time, registration_time, status) VALUES (?,?,?,?,?,?)`;
 
-  await db.query(sqlQuery, async (error, data) => {
-    try {
-      if (data.length > 0) {
-        res.json({ status: 400, message: 'User already exists' });
-      }
-      if (data.length === 0) {
-        await db.query(
-          sqlQuery1,
-          [name, email, newPassword, currentTime, currentTime, status], // add last_login_time, registration_time, and status values
-          (error, result) => {
-            if (result) {
-              res.json({ status: 200, message: 'New user', data: result });
-            } else {
-              res.json({ status: 400, message: 'Error creating user' });
-            }
-          }
-        );
-      }
-    } catch (error) {
-      res.json({ status: 400, message: 'Error creating user' });
+  try {
+    const [rows] = await db.query(sqlQuery);
+    if (rows.length > 0) {
+      res.status(400).json({ message: 'User already exists' });
+    } else {
+      const [results] = await db.query(sqlQuery1, [
+        name,
+        email,
+        newPassword,
+        currentTime,
+        currentTime,
+        status,
+      ]); // add last_login_time, registration_time, and status values
+      res.status(200).json({ message: 'New user', data: results });
     }
-  });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: 'Error creating user' });
+  }
 });
 
 app.post('/login', async (req, res) => {
